@@ -41,7 +41,7 @@ function Dashboard() {
       status:
         healthData.stream_running && camera.has_frame ? "online" : "offline",
       lastUpdate: "Live",
-      ipaddress: healthData.nvr_ip,
+      ipaddress: camera.cameraIP,
       hasFrame: camera.has_frame,
     }))
     : [];
