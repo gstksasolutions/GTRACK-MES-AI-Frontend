@@ -215,7 +215,7 @@ function CameraDetail() {
           className="mb-6"
         >
           <button
-            onClick={() => navigate("/live-view")}
+            onClick={() => navigate(-1)}
             className="flex items-center text-slate-600 hover:text-slate-800 mb-4 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />

@@ -14,8 +14,11 @@ import {
 import newRequest from "../../utils/userRequest";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@heroui/react";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
+  const navigate = useNavigate()
+
 
   const getHealth = async () => {
     const res = await newRequest.get("/health");
@@ -25,7 +28,6 @@ function Dashboard() {
   const {
     data: healthData,
     isLoading: healthLoading,
-    isError,
   } = useQuery({
     queryKey: ["health"],
     queryFn: getHealth,
@@ -59,40 +61,40 @@ function Dashboard() {
   const totalAlerts = RecentAlerts.length;
 
 
-const today = new Date();
-const yesterday = new Date();
-yesterday.setDate(today.getDate() - 1);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
 
-const isSameDay = (date1, date2) => {
-  return (
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getDate() === date2.getDate()
-  );
-};
+  const isSameDay = (date1, date2) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  };
 
-const todayIncidents = RecentAlerts.filter((alert) =>
-  isSameDay(new Date(alert.time), today),
-).length;
+  const todayIncidents = RecentAlerts.filter((alert) =>
+    isSameDay(new Date(alert.time), today),
+  ).length;
 
-const yesterdayIncidents = RecentAlerts.filter((alert) =>
-  isSameDay(new Date(alert.time), yesterday),
-).length;
+  const yesterdayIncidents = RecentAlerts.filter((alert) =>
+    isSameDay(new Date(alert.time), yesterday),
+  ).length;
 
-// Difference
-const incidentDifference = todayIncidents - yesterdayIncidents;
+  // Difference
+  const incidentDifference = todayIncidents - yesterdayIncidents;
 
-// Percentage change
-const incidentPercentage =
-  yesterdayIncidents === 0
-    ? todayIncidents > 0
-      ? 100
-      : 0
-    : Math.round((incidentDifference / yesterdayIncidents) * 100);
+  // Percentage change
+  const incidentPercentage =
+    yesterdayIncidents === 0
+      ? todayIncidents > 0
+        ? 100
+        : 0
+      : Math.round((incidentDifference / yesterdayIncidents) * 100);
 
-// Status
-const incidentTrend =
-  incidentDifference > 0 ? "up" : incidentDifference < 0 ? "down" : "same";
+  // Status
+  const incidentTrend =
+    incidentDifference > 0 ? "up" : incidentDifference < 0 ? "down" : "same";
 
   const stats = [
     {
@@ -237,11 +239,10 @@ const incidentTrend =
                     <Icon className={`w-6 h-6 ${colors.text}`} />
                   </div>
                   <span
-                    className={`text-sm font-medium ${
-                      stat.changeType === "positive"
+                    className={`text-sm font-medium ${stat.changeType === "positive"
                         ? "text-green-600"
                         : "text-red-600"
-                    }`}
+                      }`}
                   >
                     {stat.change}
                   </span>
@@ -444,25 +445,22 @@ const incidentTrend =
               >
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className={`p-3 rounded-xl ${
-                      camera.status === "online" ? "bg-green-100" : "bg-red-100"
-                    }`}
+                    className={`p-3 rounded-xl ${camera.status === "online" ? "bg-green-100" : "bg-red-100"
+                      }`}
                   >
                     <Camera
-                      className={`w-6 h-6 ${
-                        camera.status === "online"
+                      className={`w-6 h-6 ${camera.status === "online"
                           ? "text-green-600"
                           : "text-red-600"
-                      }`}
+                        }`}
                     />
                   </div>
 
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      camera.status === "online"
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${camera.status === "online"
                         ? "bg-green-100 text-green-700"
                         : "bg-red-100 text-red-700"
-                    }`}
+                      }`}
                   >
                     {camera.status.toUpperCase()}
                   </span>
@@ -484,17 +482,28 @@ const incidentTrend =
                     <span className="font-semibold">Last Update:</span>{" "}
                     {camera.lastUpdate}
                   </p>
+                  <div className="flex items-center justify-between">
 
                   <p className="text-sm text-slate-600">
                     <span className="font-semibold">Frame:</span>{" "}
                     <span
-                      className={`font-medium ${
-                        camera.hasFrame ? "text-green-600" : "text-red-600"
-                      }`}
+                      className={`font-medium ${camera.hasFrame ? "text-green-600" : "text-red-600"
+                        }`}
                     >
                       {camera.hasFrame ? "Available" : "No Frame"}
                     </span>
                   </p>
+                  <p onClick={() =>
+                    navigate(`/camera/${camera.id}`, {
+                      state: {
+                        ipAddress: camera.cameraIP,
+                        cameraName: camera.name,
+                        endpoint: camera.imagecamera,
+                        location: camera.location
+                      }
+                    })
+                  } className=" cursor-pointer bg-blue-500 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm">View</p>
+                </div>
                 </div>
               </motion.div>
             ))}
