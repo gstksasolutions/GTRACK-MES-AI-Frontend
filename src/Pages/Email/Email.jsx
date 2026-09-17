@@ -22,7 +22,7 @@ function Email() {
   const [saveError, setSaveError] = useState("");
 
   const getEmailNotifications = async () => {
-    const res = await newRequest.get("/email-notifications");
+    const res = await newRequest.get("api/email-notifications");
     return res.data?.data ?? res.data;
   };
 
@@ -68,7 +68,7 @@ function Email() {
 
   const { mutate: saveSettings, isPending: isSaving } = useMutation({
     mutationFn: async () => {
-      const res = await newRequest.put("/email-notifications", {
+      const res = await newRequest.put("/api/email-notifications", {
         receivingEmail: recipient,
         attachCapturedPhotos: includePhotos,
         enabled,
