@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Camera, MapPin, Clock, AlertTriangle, ShieldCheck, Play, Loader2 } from "lucide-react";
 import { baseUrl } from "../../utils/config";
 import newRequest from "../../utils/userRequest";
+import { fetchDetectionAlerts } from "../../utils/detectionAlerts";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@heroui/react";
 import { toast } from "react-toastify";
@@ -43,20 +44,13 @@ const {
       }))
     : [];
 
-    const getAlerts = async () => {
-      const res = await newRequest.get("/detection-alerts");
-      return res.data.data;
-    };
-  
-  const { data: RecentAlerts = [], isLoading, isError } = useQuery({
-      queryKey: ['alerts'],
-      queryFn: getAlerts
+  const { data: alertPage, isLoading } = useQuery({
+      queryKey: ["detection-alerts", "live"],
+      queryFn: () => fetchDetectionAlerts({ status: "New", page: 1, limit: 50 }),
     });
 
-    console.log(RecentAlerts, "RecentAlerts");
-    
-  
-    const totalAlerts = RecentAlerts.length;
+    const RecentAlerts = alertPage?.data ?? [];
+    const totalAlerts = alertPage?.total ?? 0;
 
     useEffect(() => {
       if (previousAlertCount.current === 0) {
@@ -84,7 +78,7 @@ const {
     };
 
   return (
-    <div className="flex min-h-screen bg-linear-to-br from-slate-50 to-slate-100 w-full">
+    <div className="flex min-h-screen app-canvas w-full">
       <div className="flex-1 p-8">
         {/* Header */}
         <motion.div

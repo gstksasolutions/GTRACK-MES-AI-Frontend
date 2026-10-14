@@ -12,6 +12,7 @@ import {
   CameraOff
 } from "lucide-react";
 import newRequest from "../../utils/userRequest";
+import { fetchDetectionAlerts, formatAlertDate } from "../../utils/detectionAlerts";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
@@ -48,38 +49,36 @@ function Dashboard() {
     }))
     : [];
 
-  const getAlerts = async () => {
-    const res = await newRequest.get("/detection-alerts");
-    return res.data.data;
-  };
+  const todayKey = formatAlertDate(new Date());
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const yesterdayKey = formatAlertDate(yesterdayDate);
 
-  const { data: RecentAlerts = [], isLoading: alertLoading } = useQuery({
-    queryKey: ["alerts"],
-    queryFn: getAlerts,
+  const { data: activeAlertPage, isLoading: alertLoading } = useQuery({
+    queryKey: ["detection-alerts", "active-total"],
+    queryFn: () => fetchDetectionAlerts({ status: "New", page: 1, limit: 1 }),
   });
 
-  const totalAlerts = RecentAlerts.length;
+  const { data: todayAlertPage } = useQuery({
+    queryKey: ["detection-alerts", "day-total", todayKey],
+    queryFn: () =>
+      fetchDetectionAlerts({ start: todayKey, end: todayKey, page: 1, limit: 1 }),
+  });
 
+  const { data: yesterdayAlertPage } = useQuery({
+    queryKey: ["detection-alerts", "day-total", yesterdayKey],
+    queryFn: () =>
+      fetchDetectionAlerts({
+        start: yesterdayKey,
+        end: yesterdayKey,
+        page: 1,
+        limit: 1,
+      }),
+  });
 
-  const today = new Date();
-  const yesterday = new Date();
-  yesterday.setDate(today.getDate() - 1);
-
-  const isSameDay = (date1, date2) => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  };
-
-  const todayIncidents = RecentAlerts.filter((alert) =>
-    isSameDay(new Date(alert.time), today),
-  ).length;
-
-  const yesterdayIncidents = RecentAlerts.filter((alert) =>
-    isSameDay(new Date(alert.time), yesterday),
-  ).length;
+  const totalAlerts = activeAlertPage?.total ?? 0;
+  const todayIncidents = todayAlertPage?.total ?? 0;
+  const yesterdayIncidents = yesterdayAlertPage?.total ?? 0;
 
   // Difference
   const incidentDifference = todayIncidents - yesterdayIncidents;
@@ -132,7 +131,7 @@ function Dashboard() {
       change: "+3%",
       changeType: "positive",
       icon: ShieldCheck,
-      color: "purple",
+      color: "amber",
       description: "Overall compliance",
     },
   ];
@@ -193,17 +192,17 @@ function Dashboard() {
         iconBg: "bg-green-500",
         text: "text-green-600"
       },
-      purple: {
-        bg: "bg-purple-50",
-        iconBg: "bg-purple-500",
-        text: "text-purple-600"
+      amber: {
+        bg: "bg-amber-50",
+        iconBg: "bg-amber-600",
+        text: "text-amber-700"
       }
     };
     return colors[color] || colors.blue;
   };
 
   return (
-    <div className="flex min-h-screen bg-linear-to-br from-slate-50 to-slate-100 w-full">
+    <div className="app-canvas flex min-h-screen w-full">
       <div className="flex-1 p-8">
         {/* Header */}
         <motion.div
@@ -550,17 +549,17 @@ function Dashboard() {
             <p className="text-green-200 text-sm mt-3">↑ 2.3% this week</p>
           </div>
 
-          <div className="bg-linear-to-r from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
+          <div className="bg-linear-to-r from-amber-600 to-amber-700 rounded-2xl shadow-lg p-6 text-white">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm font-medium mb-1">
+                <p className="text-amber-100 text-sm font-medium mb-1">
                   Avg Response Time
                 </p>
                 <p className="text-3xl font-bold">2.4m</p>
               </div>
-              <Clock className="w-12 h-12 text-purple-200" />
+              <Clock className="w-12 h-12 text-amber-200" />
             </div>
-            <p className="text-purple-200 text-sm mt-3">↓ 30s improvement</p>
+            <p className="text-amber-100 text-sm mt-3">↓ 30s improvement</p>
           </div>
         </motion.div>
       </div>

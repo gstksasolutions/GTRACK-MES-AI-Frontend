@@ -1,13 +1,47 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
+@theme {
+  --color-blue-50: #f2fbfb;
+  --color-blue-100: #d8f4f4;
+  --color-blue-200: #b3e6e7;
+  --color-blue-300: #7dd3d4;
+  --color-blue-400: #45b8bb;
+  --color-blue-500: #1c9aa0;
+  --color-blue-600: #147e85;
+  --color-blue-700: #14656b;
+  --color-blue-800: #165256;
+  --color-blue-900: #174447;
+  --color-blue-950: #07282b;
+}
+
 body {
   margin: 0;
+  background: #e8f0f1;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: #b3e6e7;
+  color: #07282b;
+}
+
+.app-canvas {
+  background:
+    radial-gradient(900px 420px at 100% -8%, rgba(28, 154, 160, 0.14), transparent 60%),
+    radial-gradient(700px 360px at 0% 100%, rgba(20, 126, 133, 0.08), transparent 55%),
+    linear-gradient(165deg, #f7fbfb 0%, #e8f0f1 100%);
+}
+
+.login-canvas {
+  background:
+    radial-gradient(700px 400px at 12% 18%, rgba(69, 184, 187, 0.28), transparent 60%),
+    radial-gradient(620px 380px at 88% 82%, rgba(20, 101, 107, 0.45), transparent 55%),
+    linear-gradient(145deg, #071418 0%, #0c2429 48%, #07282b 100%);
 }
 
 code {

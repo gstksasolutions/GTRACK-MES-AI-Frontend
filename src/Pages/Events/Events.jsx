@@ -17,7 +17,7 @@ function Events() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-slate-50 to-slate-100 p-8">
+    <div className="min-h-screen w-full app-canvas p-8">
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <p className="text-sm font-semibold text-blue-600">MONITORING HISTORY</p>
         <h1 className="mt-1 text-3xl font-bold text-slate-800">Events</h1>

@@ -96,7 +96,7 @@ function Email() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-slate-50 to-slate-100 p-8">
+    <div className="min-h-screen w-full app-canvas p-8">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-blue-600">
@@ -215,16 +215,16 @@ function Email() {
           </div>
         </section>
 
-        <section className="rounded-2xl bg-slate-900 p-6 text-white shadow-xl">
-          <Settings2 className="h-9 w-9 text-blue-400" />
+        <section className="rounded-2xl bg-linear-to-br from-[#0e2a31] to-[#14656b] p-6 text-white shadow-xl">
+          <Settings2 className="h-9 w-9 text-blue-200" />
           <h2 className="mt-5 text-xl font-bold">Delivery Status</h2>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-blue-100">
             {(deliveryStatus.notificationsEnabled ?? enabled)
               ? "Safety-alert emails are active and will be sent when a new critical event is detected."
               : "Email notifications are currently disabled."}
           </p>
-          <div className="mt-6 rounded-xl bg-slate-800 p-4">
-            <p className="text-sm text-slate-400">Current recipient</p>
+          <div className="mt-6 rounded-xl bg-black/20 p-4">
+            <p className="text-sm text-blue-100">Current recipient</p>
             <p className="mt-1 break-all text-sm font-bold text-white">
               {deliveryStatus.currentRecipient ||
                 recipient ||
@@ -232,15 +232,15 @@ function Email() {
             </p>
           </div>
           {deliveryStatus.updatedAt && (
-            <p className="mt-3 text-xs text-slate-500">
+            <p className="mt-3 text-xs text-blue-200">
               Updated: {new Date(deliveryStatus.updatedAt).toLocaleString()}
             </p>
           )}
           <p
             className={`mt-5 flex items-center gap-2 text-sm font-semibold ${
               (deliveryStatus.notificationsEnabled ?? enabled)
-                ? "text-green-400"
-                : "text-slate-400"
+                ? "text-green-300"
+                : "text-blue-200"
             }`}
           >
             <CheckCircle2 className="h-4 w-4" />
