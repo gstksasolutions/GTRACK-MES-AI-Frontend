@@ -17,7 +17,7 @@ function WhatsApp() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-slate-50 to-slate-100 p-8">
+    <div className="min-h-screen w-full app-canvas p-8">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div><p className="text-sm font-semibold text-green-600">INSTANT ALERTS</p><h1 className="mt-1 text-3xl font-bold text-slate-800">WhatsApp Notifications</h1><p className="mt-2 text-slate-500">Send critical safety alerts directly to your WhatsApp number.</p></div>
         <button onClick={saveNotificationSettings} className="flex items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-green-500/30 hover:bg-green-700"><Send className="h-4 w-4" /> Save Notifications</button>

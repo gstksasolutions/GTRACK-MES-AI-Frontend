@@ -10,7 +10,7 @@ function Reports() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-slate-50 to-slate-100 p-8">
+    <div className="min-h-screen w-full app-canvas p-8">
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-blue-600">ANALYTICS & INSIGHTS</p>

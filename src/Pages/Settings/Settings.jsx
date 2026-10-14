@@ -10,7 +10,7 @@ function Settings() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-slate-50 to-slate-100 p-8">
+    <div className="min-h-screen w-full app-canvas p-8">
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
         <p className="text-sm font-semibold text-blue-600">SYSTEM MANAGEMENT</p>
         <h1 className="mt-1 text-3xl font-bold text-slate-800">Settings</h1>
@@ -28,12 +28,12 @@ function Settings() {
           <button className="mt-6 flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700"><Save className="h-4 w-4" /> Save Profile</button>
         </motion.section>
 
-        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-2xl bg-slate-900 p-6 text-white shadow-xl">
-          <ShieldCheck className="h-10 w-10 text-blue-400" />
+        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-2xl bg-linear-to-br from-[#0e2a31] to-[#14656b] p-6 text-white shadow-xl">
+          <ShieldCheck className="h-10 w-10 text-blue-200" />
           <h2 className="mt-5 text-xl font-bold">Security Status</h2>
-          <p className="mt-2 text-sm text-slate-400">Your account and connected devices are protected.</p>
-          <div className="mt-6 rounded-xl bg-slate-800 p-4"><p className="text-sm font-medium text-slate-300">Two-factor authentication</p><p className="mt-1 text-sm font-bold text-green-400">Enabled</p></div>
-          <button className="mt-5 flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300"><KeyRound className="h-4 w-4" /> Manage security</button>
+          <p className="mt-2 text-sm text-blue-100">Your account and connected devices are protected.</p>
+          <div className="mt-6 rounded-xl bg-black/20 p-4"><p className="text-sm font-medium text-blue-100">Two-factor authentication</p><p className="mt-1 text-sm font-bold text-green-300">Enabled</p></div>
+          <button className="mt-5 flex items-center gap-2 text-sm font-semibold text-blue-100 hover:text-white"><KeyRound className="h-4 w-4" /> Manage security</button>
         </motion.section>
 
         <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-2xl bg-white p-6 shadow-xl xl:col-span-3">

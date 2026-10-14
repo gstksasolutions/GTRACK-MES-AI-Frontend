@@ -8,7 +8,7 @@ function App() {
   const isLoginPage = location.pathname === '/';
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-[#e8f0f1] overflow-hidden">
       {!isLoginPage && <Sidebar />}
       <PageRouter/>
     </div>

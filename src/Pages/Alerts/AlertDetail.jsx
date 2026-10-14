@@ -13,14 +13,14 @@ function AlertDetail() {
 
   if (!alertData) {
     return (
-      <div className="flex min-h-screen bg-linear-to-br from-slate-50 to-slate-100 w-full items-center justify-center">
+      <div className="flex min-h-screen app-canvas w-full items-center justify-center">
         <p className="text-slate-600">No alert data found</p>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-linear-to-br from-slate-50 to-slate-100 w-full">
+    <div className="flex min-h-screen app-canvas w-full">
       <div className="flex-1 p-8">
         <Button
           onClick={() => navigate("/Alert")}

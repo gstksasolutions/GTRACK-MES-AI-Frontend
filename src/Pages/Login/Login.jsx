@@ -14,9 +14,9 @@ function Login() {
   };
 
   return (
-    <main className="flex min-h-screen w-full items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-blue-950 p-6">
+    <main className="login-canvas flex min-h-screen w-full items-center justify-center p-6">
       <section className="grid w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl lg:grid-cols-2">
-        <div className="hidden min-h-[620px] flex-col justify-between bg-linear-to-br from-blue-600 to-indigo-700 p-10 text-white lg:flex">
+        <div className="hidden min-h-[620px] flex-col justify-between bg-linear-to-br from-blue-600 via-blue-700 to-blue-950 p-10 text-white lg:flex">
           <div className="flex items-center gap-3"><div className="rounded-xl bg-white/20 p-3"><ShieldCheck className="h-7 w-7" /></div><span className="text-2xl font-bold">GTRACK-MES</span></div>
           <div><p className="text-sm font-semibold tracking-widest text-blue-100">SMART SAFETY MONITORING</p><h1 className="mt-4 text-4xl font-bold leading-tight">A safer workplace starts with clear visibility.</h1><p className="mt-5 max-w-sm text-blue-100">Monitor cameras, investigate events, and respond to safety alerts from one place.</p></div>
           <p className="text-sm text-blue-100">© 2026 GTRACK-MES. All rights reserved.</p>

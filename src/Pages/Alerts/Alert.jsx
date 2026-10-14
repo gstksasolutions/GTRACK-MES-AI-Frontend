@@ -1,10 +1,14 @@
-import React from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AlertTriangle, Clock, Camera, CheckCircle, XCircle, TriangleAlert } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Clock, Camera, CheckCircle, XCircle, TriangleAlert } from "lucide-react";
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
-// import { Spinner, Button, Card } from "@nextui-org/react";
-import newRequest from "../../utils/userRequest";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  ALERT_STATUSES,
+  DETECTION_CLASSES,
+  fetchDetectionAlerts,
+  formatAlertDate,
+} from "../../utils/detectionAlerts";
 import { AiOutlineEye } from "react-icons/ai";
 import {
   Table,
@@ -20,25 +24,71 @@ import {
   EmptyState,
 } from "@heroui/react";
 
+const PAGE_LIMIT = 50;
+
 function Alert() {
   const navigate = useNavigate();
+  const today = formatAlertDate(new Date());
+  const monthStart = formatAlertDate(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  );
 
-  const getAlerts = async () => {
-    const res = await newRequest.get("/detection-alerts");
-    return res.data.data;
+  const [start, setStart] = useState(monthStart);
+  const [end, setEnd] = useState(today);
+  const [status, setStatus] = useState("New");
+  const [selectedClasses, setSelectedClasses] = useState([]);
+  const [page, setPage] = useState(1);
+
+  const hasValidRange = start <= end;
+
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ["detection-alerts", { start, end, status, selectedClasses, page }],
+    queryFn: () =>
+      fetchDetectionAlerts({
+        start,
+        end,
+        status,
+        classes: selectedClasses,
+        page,
+        limit: PAGE_LIMIT,
+      }),
+    enabled: hasValidRange,
+    placeholderData: keepPreviousData,
+  });
+
+  const alerts = data?.data ?? [];
+  const totalAlerts = data?.total ?? 0;
+  const totalPages = data?.totalPages ?? 1;
+  const classOptions = data?.classes?.length ? data.classes : DETECTION_CLASSES;
+  const rangeStart = alerts.length === 0 ? 0 : (page - 1) * PAGE_LIMIT + 1;
+  const rangeEnd = alerts.length === 0 ? 0 : rangeStart + alerts.length - 1;
+
+  const rows = useMemo(
+    () =>
+      alerts.map((item, index) => ({
+        ...item,
+        rowNumber: (page - 1) * PAGE_LIMIT + index + 1,
+      })),
+    [alerts, page],
+  );
+
+  const updateFilter = (setter) => (value) => {
+    setter(value);
+    setPage(1);
   };
 
-const { data: RecentAlerts = [], isLoading, isError } = useQuery({
-    queryKey: ['alerts'],
-    queryFn: getAlerts
-  });
-   console.log(RecentAlerts);
-
-  const totalAlerts = RecentAlerts.length;
+  const toggleClass = (value) => {
+    setSelectedClasses((current) =>
+      current.includes(value)
+        ? current.filter((item) => item !== value)
+        : [...current, value],
+    );
+    setPage(1);
+  };
  
 
   return (
-    <div className="flex min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 w-full">
+    <div className="app-canvas flex min-h-screen w-full">
       <div className="flex-1 p-8">
         {/* Header */}
         <motion.div
@@ -72,9 +122,72 @@ const { data: RecentAlerts = [], isLoading, isError } = useQuery({
               </h2>
               <div className="bg-blue-100 px-4 py-2 rounded-full">
                 <span className="text-blue-700 font-bold">
-                  Total: {totalAlerts}
+                  Total: {totalAlerts.toLocaleString()}
                 </span>
               </div>
+            </div>
+
+            <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+              <label className="text-sm font-semibold text-slate-700">
+                Start date
+                <input
+                  type="date"
+                  value={start}
+                  max={end}
+                  onChange={(event) => updateFilter(setStart)(event.target.value)}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 font-normal outline-none focus:border-blue-500"
+                />
+              </label>
+              <label className="text-sm font-semibold text-slate-700">
+                End date
+                <input
+                  type="date"
+                  value={end}
+                  min={start}
+                  onChange={(event) => updateFilter(setEnd)(event.target.value)}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 font-normal outline-none focus:border-blue-500"
+                />
+              </label>
+              
+            </div>
+
+            <div className="mb-6">
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-sm font-semibold text-slate-700">Detection class</p>
+                {selectedClasses.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => updateFilter(setSelectedClasses)([])}
+                    className="text-sm font-semibold text-blue-700 hover:text-blue-800"
+                  >
+                    Clear classes
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {classOptions.map((option) => {
+                  const isSelected = selectedClasses.includes(option.class);
+                  return (
+                    <button
+                      key={option.class}
+                      type="button"
+                      onClick={() => toggleClass(option.class)}
+                      className={`rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
+                        isSelected
+                          ? "bg-blue-600 text-white"
+                          : "bg-slate-100 text-slate-700 hover:bg-blue-50"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+              {!hasValidRange && (
+                <p className="mt-3 text-sm font-medium text-red-600">
+                  Start date must be on or before the end date.
+                </p>
+              )}
             </div>
 
             {/* <div className="overflow-y-auto overflow-x-hidden max-h-100 rounded-xl border border-slate-200">
@@ -133,7 +246,7 @@ const { data: RecentAlerts = [], isLoading, isError } = useQuery({
                     RecentAlerts.map((item, index) => (
                       <tr
                         key={item.id}
-                        className="border-b border-slate-100 hover:bg-linear-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 group"
+                        className="border-b border-slate-100 hover:bg-blue-50 transition-all duration-200 group"
                       >
                         <td className="px-6 py-4">
                           <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-blue-600 text-white text-sm font-bold shadow-md">
@@ -259,7 +372,20 @@ const { data: RecentAlerts = [], isLoading, isError } = useQuery({
                         </Table.Cell>
                       </Table.Row>
                     </Table.Body>
-                  ) : RecentAlerts.length === 0 ? (
+                  ) : isError ? (
+                    <Table.Body items={[]}>
+                      <Table.Row>
+                        <Table.Cell colSpan={7}>
+                          <div className="flex flex-col items-center justify-center gap-3 py-10 text-slate-500">
+                            <TriangleAlert className="w-12 h-12 text-orange-500" />
+                            <span className="text-sm font-medium">
+                              Unable to load alerts
+                            </span>
+                          </div>
+                        </Table.Cell>
+                      </Table.Row>
+                    </Table.Body>
+                  ) : rows.length === 0 ? (
                     <Table.Body items={[]}>
                       <Table.Row>
                         <Table.Cell colSpan={7}>
@@ -273,14 +399,10 @@ const { data: RecentAlerts = [], isLoading, isError } = useQuery({
                       </Table.Row>
                     </Table.Body>
                   ) : (
-                    <Table.Body items={RecentAlerts}>
+                    <Table.Body items={rows}>
                       {(item) => (
                         <Table.Row>
-                          <Table.Cell>
-                            {" "}
-                            {RecentAlerts.findIndex((x) => x.id === item.id) +
-                              1}
-                          </Table.Cell>
+                          <Table.Cell>{item.rowNumber}</Table.Cell>
                           <Table.Cell>
                             <div className="flex items-center gap-2">
                               <Clock className="w-4 h-4 text-slate-400" />
@@ -368,6 +490,35 @@ const { data: RecentAlerts = [], isLoading, isError } = useQuery({
                 </Table.Content>
               </Table.ScrollContainer>
             </Table>
+
+            <div className="mt-5 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-slate-500">
+                {isFetching && !isLoading ? "Updating results... " : ""}
+                Showing {rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()} of{" "}
+                {totalAlerts.toLocaleString()}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                  disabled={page <= 1 || isFetching}
+                  className="inline-flex items-center gap-1 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <ChevronLeft className="h-4 w-4" /> Previous
+                </button>
+                <span className="px-2 text-sm font-semibold text-slate-700">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                  disabled={page >= totalPages || isFetching}
+                  className="inline-flex items-center gap-1 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
           </Card>
         </motion.div>
       </div>

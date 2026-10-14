@@ -16,7 +16,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { baseUrl } from "../../utils/config";
-import newRequest from "../../utils/userRequest";
+import { fetchDetectionAlerts } from "../../utils/detectionAlerts";
 import { useQuery } from "@tanstack/react-query";
 
 function CameraDetail() {
@@ -131,19 +131,16 @@ function CameraDetail() {
     };
   }, []);
 
-  const getAlerts = async () => {
-    const res = await newRequest.get("/detection-alerts");
-    return res.data.data;
-  };
-
   const {
-    data: alerts = [],
+    data: alertPage,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["alerts"],
-    queryFn: getAlerts,
+    queryKey: ["detection-alerts", "camera-detail"],
+    queryFn: () => fetchDetectionAlerts({ page: 1, limit: 50 }),
   });
+
+  const alerts = alertPage?.data ?? [];
 
   const lastAlertId = useRef(null);
 
@@ -205,7 +202,7 @@ function CameraDetail() {
   };
 
   return (
-    <div className="flex min-h-screen bg-linear-to-br from-slate-50 to-slate-100 w-full">
+    <div className="flex min-h-screen app-canvas w-full">
       <div className="flex-1 p-8">
         {/* Header */}
         <motion.div
